@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách học sinh</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Danh sách học sinh</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Mã HS</th>
+        <th>Họ tên</th>
+        <th>Ngày sinh</th>
+        <th>Giới tính</th>
+        <th>Chức năng</th>
+
+    </tr>
+    </thead>
+    <tbody id="hocSinhTableBody">
+
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+        fetch("http://localhost:8080/api/hocsinh", {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Lỗi khi gọi API: " + res.status);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const tbody = document.getElementById("hocSinhTableBody");
+                data.forEach(hs => {
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+                    <td>${hs.id}</td>
+                    <td>${hs.maHS}</td>
+                    <td>${hs.hoTen}</td>
+                    <td>${hs.ngaySinh}</td>
+                    <td>${hs.gioiTinh ? 'Nam' : 'Nữ'}</td>
+                    <td>${
+                        fetch("http://localhost:8080/api/hocsinh")
+                    }</td>
+                `;
+
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(err => {
+                alert("Lỗi: " + err.message);
+            });
+    });
+
+
+    const token = localStorage.getItem("token");
+
+    fetch("http://localhost:8080/api/hocsinh", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+        .then(res => res.json())
+        .then(data => {
+            // Hiển thị danh sách học sinh
+        })
+        .catch(err => console.error(err));
+
+</script>
+
+</body>
+</html>
